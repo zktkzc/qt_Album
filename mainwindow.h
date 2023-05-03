@@ -6,7 +6,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QDebug>
-#include "wizard.h"
+#include <QWidget>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,6 +26,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QWidget* proTree;
 };
 
 #endif // MAINWINDOW_H

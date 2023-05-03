@@ -13,18 +13,26 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     prosetpage.cpp \
+    protree.cpp \
+    protreeitem.cpp \
+    protreewidget.cpp \
     wizard.cpp
 
 HEADERS += \
     confirmpage.h \
+    const.h \
     mainwindow.h \
     prosetpage.h \
+    protree.h \
+    protreeitem.h \
+    protreewidget.h \
     wizard.h
 
 FORMS += \
     confirmpage.ui \
     mainwindow.ui \
     prosetpage.ui \
+    protree.ui \
     wizard.ui
 
 # Default rules for deployment.

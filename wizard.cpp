@@ -12,3 +12,15 @@ Wizard::~Wizard()
 {
     delete ui;
 }
+
+void Wizard::done(int result)
+{
+    if (result == QDialog::Rejected) {
+        return QWizard::done(result);
+    }
+
+    QString name, path;
+    ui->wizardPage1->getProSettings(name, path);
+    emit sigProSettings(name, path); // 发信号
+    QWizard::done(result);
+}

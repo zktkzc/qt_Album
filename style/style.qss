@@ -35,7 +35,7 @@ ProTree {
     padding-right: 10px;
 }
 
-QLabel#label_pro {
+QLabel#labelPro {
     color: rgb(231,231,231);
     border-color: #9F9F9F;
     border-style: dotted;
