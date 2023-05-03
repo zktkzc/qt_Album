@@ -41,6 +41,14 @@ MainWindow::~MainWindow()
 void MainWindow::SlotCreatePro(bool)
 {
     qDebug() << "slot create pro triggered";
+    Wizard wizard(this);
+    wizard.setWindowTitle(tr("创建项目"));
+    auto *page = wizard.page(0);
+    page->setTitle(tr("设置项目配置"));
+    // TODO 连接信号和槽，把项目配置传回来
+    wizard.show();
+    wizard.exec();
+    // TODO 断开所有信号
 }
 
 

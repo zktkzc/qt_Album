@@ -6,6 +6,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QDebug>
+#include "wizard.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
