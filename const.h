@@ -8,4 +8,7 @@ enum TreeItemType{
     TreeItemPic = 3 // 表示项目的图片
 };
 
+const int PROGRESS_WIDTH = 300;
+const int PROGRESS_MAX = 300;
+
 #endif // CONST_H
