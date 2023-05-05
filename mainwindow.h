@@ -7,6 +7,7 @@
 #include <QAction>
 #include <QDebug>
 #include <QWidget>
+#include <QFileDialog>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,6 +24,10 @@ public:
 
 private slots:
     void SlotCreatePro(bool);
+    void SlotOpenPro(bool);
+
+signals:
+    void sigOpenPro(const QString path);
 
 private:
     Ui::MainWindow *ui;

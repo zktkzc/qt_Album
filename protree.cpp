@@ -15,6 +15,11 @@ ProTree::~ProTree()
     delete ui;
 }
 
+QTreeWidget *ProTree::getTreeWidget()
+{
+    return ui->treeWidget;
+}
+
 void ProTree::addProToTree(const QString name, const QString path)
 {
     ui->treeWidget->addProToTree(name, path);

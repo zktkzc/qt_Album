@@ -2,8 +2,11 @@
 #include "protreewidget.h"
 #include "protreeitem.h"
 #include "const.h"
+#include "removeprodialog.h"
 
 ProTreeWidget::ProTreeWidget(QWidget* parent)
+    : QTreeWidget(parent), active_item(nullptr), right_click_item(nullptr), m_dialog_progress(nullptr), selected_item(nullptr),
+    m_thread_create_pro(nullptr), m_thread_open_pro(nullptr), m_open_progressdlg(nullptr)
 {
     // 隐藏表头
     this->header()->hide();
@@ -16,6 +19,8 @@ ProTreeWidget::ProTreeWidget(QWidget* parent)
     act_slideShow = new QAction(QIcon(":/icon/slideshow.png"), tr("轮播图播放"), this);
 
     connect(act_import, &QAction::triggered, this, &ProTreeWidget::slotImport);
+    connect(act_setStart, &QAction::triggered, this, &ProTreeWidget::slotSetActive);
+    connect(act_closePro, &QAction::triggered, this, &ProTreeWidget::slotClosePro);
 }
 
 void ProTreeWidget::addProToTree(const QString &name, const QString &path)
@@ -42,6 +47,31 @@ void ProTreeWidget::addProToTree(const QString &name, const QString &path)
     item->setData(0, Qt::DecorationRole, QIcon(":/icon/dir.png"));
     item->setData(0, Qt::ToolTipRole, file_path);
     this->addTopLevelItem(item);
+}
+
+void ProTreeWidget::slotOpenPro(const QString &path)
+{
+    if (set_path.find(path) != set_path.end()) return;
+    set_path.insert(path);
+    int file_count = 0;
+    QDir pro_dir(path);
+    const QString proName = pro_dir.dirName();
+    m_thread_open_pro = std::make_shared<OpenTreeThread>(path, file_count, this, nullptr);
+
+    m_open_progressdlg = new QProgressDialog(this);
+
+    connect(m_thread_open_pro.get(), &OpenTreeThread::sigUpdateProgress, this, &ProTreeWidget::slotUpdateOpenProgress);
+    connect(m_thread_open_pro.get(), &OpenTreeThread::sigFinishProgress, this, &ProTreeWidget::slotFinishOpenProgress);
+    connect(m_open_progressdlg, &QProgressDialog::canceled, this, &ProTreeWidget::slotCancleOpenProgress);
+    connect(this, &ProTreeWidget::sigCancleOpenProgress, m_thread_open_pro.get(), &OpenTreeThread::slotCancleOpenProgress);
+
+    m_thread_open_pro->start();
+
+    // 初始化对话框
+    m_open_progressdlg->setWindowTitle("Please wait...");
+    m_open_progressdlg->setFixedWidth(PROGRESS_WIDTH);
+    m_open_progressdlg->setRange(0, PROGRESS_WIDTH); // 设置波动范围
+    m_open_progressdlg->exec(); // 模态显示对话框
 }
 
 void ProTreeWidget::slotItemPressed(QTreeWidgetItem *pressedItem, int column)
@@ -119,5 +149,58 @@ void ProTreeWidget::slotCancleProgress()
     emit sigCancleProgress();
     delete m_dialog_progress;
     m_dialog_progress = nullptr;
+}
+
+void ProTreeWidget::slotSetActive()
+{
+    if (!right_click_item) return;
+
+    QFont nullFont;
+    nullFont.setBold(false);
+
+    if (active_item) active_item->setFont(0, nullFont);
+    active_item = right_click_item;
+    nullFont.setBold(true);
+    active_item->setFont(0, nullFont);
+}
+
+void ProTreeWidget::slotClosePro()
+{
+    RemoveProDialog remove_pro_dialog;
+    auto res = remove_pro_dialog.exec();
+    if (res != QDialog::Accepted) return;
+    bool b_remove = remove_pro_dialog.isRemoved();
+    auto index_right_btn = this->indexOfTopLevelItem(right_click_item);
+    auto *pro_tree_item = dynamic_cast<ProTreeItem*>(right_click_item);
+    auto *selectedItem = dynamic_cast<ProTreeItem*>(selected_item);
+    auto delete_path = pro_tree_item->getPath();
+    set_path.remove(delete_path);
+    if (b_remove) {
+        QDir delete_dir(delete_path);
+        delete_dir.removeRecursively(); // 删除目录
+    }
+    if (pro_tree_item == active_item) active_item = nullptr;
+    delete this->takeTopLevelItem(index_right_btn);
+    right_click_item = nullptr;
+}
+
+void ProTreeWidget::slotUpdateOpenProgress(int file_count)
+{
+    if (m_open_progressdlg) return;
+    if (file_count >= PROGRESS_MAX) m_open_progressdlg->setValue(file_count%PROGRESS_MAX);
+    else m_open_progressdlg->setValue(file_count);
+}
+
+void ProTreeWidget::slotFinishOpenProgress(int file_count)
+{
+    m_open_progressdlg->setValue(PROGRESS_MAX);
+    m_open_progressdlg->deleteLater();
+}
+
+void ProTreeWidget::slotCancleOpenProgress()
+{
+    emit sigCancleProgress();
+    delete m_open_progressdlg;
+    m_open_progressdlg = nullptr;
 }
 

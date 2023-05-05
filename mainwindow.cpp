@@ -3,6 +3,7 @@
 #include "ui_mainwindow.h"
 #include "wizard.h"
 #include "protree.h"
+#include "protreewidget.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -32,9 +33,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     // 连接信号和槽
     connect(act_create_pro, &QAction::triggered, this, &MainWindow::SlotCreatePro);
-
+    connect(act_open_pro, &QAction::triggered, this, &MainWindow::SlotOpenPro);
     proTree = new ProTree();
     ui->proLayout->addWidget(proTree, 0);
+    auto *tree_widget = dynamic_cast<ProTree*>(proTree)->getTreeWidget();
+    auto *pro_tree_widget = dynamic_cast<ProTreeWidget*>(tree_widget);
+    connect(this, &MainWindow::sigOpenPro, pro_tree_widget, &ProTreeWidget::slotOpenPro);
 }
 
 MainWindow::~MainWindow()
@@ -55,6 +59,20 @@ void MainWindow::SlotCreatePro(bool)
     wizard.exec();
     // 断开所有信号
     disconnect();
+}
+
+void MainWindow::SlotOpenPro(bool)
+{
+    QFileDialog file_dialog;
+    file_dialog.setFileMode(QFileDialog::Directory);
+    file_dialog.setWindowTitle(tr("请选择打开的文件夹"));
+    file_dialog.setDirectory(QDir::currentPath());
+    file_dialog.setViewMode(QFileDialog::Detail);
+    QStringList fileNames;
+    if (file_dialog.exec()) fileNames = file_dialog.selectedFiles();
+    if (fileNames.length() <= 0) return;
+    QString import_path = fileNames.at(0);
+    emit sigOpenPro(import_path);
 }
 
 
