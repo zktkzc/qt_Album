@@ -4,11 +4,13 @@
 #include "wizard.h"
 #include "protree.h"
 #include "protreewidget.h"
+#include "picshow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    this->setMinimumSize(1629, 869);
     ui->setupUi(this);
     // 创建菜单
     QMenu* menu_file = menuBar()->addMenu(tr("文件(&F)"));
@@ -39,11 +41,29 @@ MainWindow::MainWindow(QWidget *parent)
     auto *tree_widget = dynamic_cast<ProTree*>(proTree)->getTreeWidget();
     auto *pro_tree_widget = dynamic_cast<ProTreeWidget*>(tree_widget);
     connect(this, &MainWindow::sigOpenPro, pro_tree_widget, &ProTreeWidget::slotOpenPro);
+
+    m_picShow = new PicShow();
+    ui->picLayout->addWidget(m_picShow);
+
+    auto *pro_pic_show = dynamic_cast<PicShow*>(m_picShow);
+    connect(pro_tree_widget, &ProTreeWidget::sigUpdateSelected, pro_pic_show, &PicShow::slotSelectedItem);
+
+    connect(pro_pic_show, &PicShow::sigNextClicked, pro_tree_widget, &ProTreeWidget::slotNextShow);
+    connect(pro_pic_show, &PicShow::sigPreClicked, pro_tree_widget, &ProTreeWidget::slotPreShow);
+    connect(pro_tree_widget, &ProTreeWidget::sigUpdatePic, pro_pic_show, &PicShow::slotUpdatePic);
+    connect(pro_tree_widget, &ProTreeWidget::sigClearSelected, pro_pic_show, &PicShow::slotDeleteItem);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    auto *pro_pic_show = dynamic_cast<PicShow*>(m_picShow);
+    pro_pic_show->reloadPic();
+    QMainWindow::resizeEvent(event);
 }
 
 void MainWindow::SlotCreatePro(bool)

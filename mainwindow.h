@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QWidget>
 #include <QFileDialog>
+#include <QResizeEvent>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,6 +23,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+protected:
+    void resizeEvent(QResizeEvent *event);
+
 private slots:
     void SlotCreatePro(bool);
     void SlotOpenPro(bool);
@@ -32,6 +36,7 @@ signals:
 private:
     Ui::MainWindow *ui;
     QWidget* proTree;
+    QWidget* m_picShow;
 };
 
 #endif // MAINWINDOW_H

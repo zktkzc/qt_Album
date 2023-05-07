@@ -48,7 +48,7 @@ PicShow {
     border-color: #9F9F9F;
     border-style: solid;
     border-width: 1px 1px 1px 1px;
-    padding: 10px;
+    padding: 10px; /*内边距*/
     background: rgb(64,66,68);
 }
 
@@ -90,7 +90,7 @@ QTreeView::branch:closed:has-children:!has-siblings,
 QTreeView::branch:closed:has-children:has-siblings
 {image: url(:/icon/right.png);}
 
-#nextBtn,#closeBtn,#previousBtn  {
+#nextBtn,#closeBtn,#preBtn  {
     border: 0px;
 }
 

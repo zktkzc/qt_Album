@@ -21,6 +21,7 @@ ProTreeWidget::ProTreeWidget(QWidget* parent)
     connect(act_import, &QAction::triggered, this, &ProTreeWidget::slotImport);
     connect(act_setStart, &QAction::triggered, this, &ProTreeWidget::slotSetActive);
     connect(act_closePro, &QAction::triggered, this, &ProTreeWidget::slotClosePro);
+    connect(this, &ProTreeWidget::itemDoubleClicked, this, &ProTreeWidget::slotDoubleClickItem);
 }
 
 void ProTreeWidget::addProToTree(const QString &name, const QString &path)
@@ -72,6 +73,26 @@ void ProTreeWidget::slotOpenPro(const QString &path)
     m_open_progressdlg->setFixedWidth(PROGRESS_WIDTH);
     m_open_progressdlg->setRange(0, PROGRESS_WIDTH); // 设置波动范围
     m_open_progressdlg->exec(); // 模态显示对话框
+}
+
+void ProTreeWidget::slotNextShow()
+{
+    if (!selected_item) return;
+    auto *curItem = dynamic_cast<ProTreeItem*>(selected_item)->getNextItem();
+    if (!curItem) return;
+    emit sigUpdatePic(curItem->getPath());
+    selected_item = curItem;
+    this->setCurrentItem(curItem);
+}
+
+void ProTreeWidget::slotPreShow()
+{
+    if (!selected_item) return;
+    auto *curItem = dynamic_cast<ProTreeItem*>(selected_item)->getPreItem();
+    if (!curItem) return;
+    emit sigUpdatePic(curItem->getPath());
+    selected_item = curItem;
+    this->setCurrentItem(curItem);
 }
 
 void ProTreeWidget::slotItemPressed(QTreeWidgetItem *pressedItem, int column)
@@ -179,6 +200,10 @@ void ProTreeWidget::slotClosePro()
         QDir delete_dir(delete_path);
         delete_dir.removeRecursively(); // 删除目录
     }
+    if (selectedItem && pro_tree_item == selectedItem->getRoot()) {
+        selectedItem = nullptr;
+        emit sigClearSelected();
+    }
     if (pro_tree_item == active_item) active_item = nullptr;
     delete this->takeTopLevelItem(index_right_btn);
     right_click_item = nullptr;
@@ -202,5 +227,19 @@ void ProTreeWidget::slotCancleOpenProgress()
     emit sigCancleProgress();
     delete m_open_progressdlg;
     m_open_progressdlg = nullptr;
+}
+
+void ProTreeWidget::slotDoubleClickItem(QTreeWidgetItem *item, int column)
+{
+    if (QGuiApplication::mouseButtons() == Qt::LeftButton) {
+        auto *tree_doubleItem = dynamic_cast<ProTreeItem*>(item);
+        if (!tree_doubleItem) return;
+
+        int item_type = tree_doubleItem->type();
+        if (item_type == TreeItemPic) {
+            emit sigUpdateSelected(tree_doubleItem->getPath());
+            selected_item = item;
+        }
+    }
 }
 
