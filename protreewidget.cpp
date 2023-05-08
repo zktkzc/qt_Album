@@ -3,6 +3,7 @@
 #include "protreeitem.h"
 #include "const.h"
 #include "removeprodialog.h"
+#include "slideshowdialog.h"
 
 ProTreeWidget::ProTreeWidget(QWidget* parent)
     : QTreeWidget(parent), active_item(nullptr), right_click_item(nullptr), m_dialog_progress(nullptr), selected_item(nullptr),
@@ -22,6 +23,7 @@ ProTreeWidget::ProTreeWidget(QWidget* parent)
     connect(act_setStart, &QAction::triggered, this, &ProTreeWidget::slotSetActive);
     connect(act_closePro, &QAction::triggered, this, &ProTreeWidget::slotClosePro);
     connect(this, &ProTreeWidget::itemDoubleClicked, this, &ProTreeWidget::slotDoubleClickItem);
+    connect(act_slideShow, &QAction::triggered, this, &ProTreeWidget::slotSlideShow);
 }
 
 void ProTreeWidget::addProToTree(const QString &name, const QString &path)
@@ -200,11 +202,12 @@ void ProTreeWidget::slotClosePro()
         QDir delete_dir(delete_path);
         delete_dir.removeRecursively(); // 删除目录
     }
+    if (pro_tree_item == active_item) active_item = nullptr;
     if (selectedItem && pro_tree_item == selectedItem->getRoot()) {
         selectedItem = nullptr;
+        selected_item = nullptr;
         emit sigClearSelected();
     }
-    if (pro_tree_item == active_item) active_item = nullptr;
     delete this->takeTopLevelItem(index_right_btn);
     right_click_item = nullptr;
 }
@@ -241,5 +244,20 @@ void ProTreeWidget::slotDoubleClickItem(QTreeWidgetItem *item, int column)
             selected_item = item;
         }
     }
+}
+
+void ProTreeWidget::slotSlideShow()
+{
+    if (!right_click_item) return;
+    auto *right_pro_item = dynamic_cast<ProTreeItem*>(right_click_item);
+    auto *last_child_item = right_pro_item->getLastPicChild();
+    if (!last_child_item) return;
+    auto *first_child_item = right_pro_item->getFirstPicChild();
+    if (!first_child_item) return;
+    qDebug() << "first_child_item is " << first_child_item->getPath();
+    qDebug() << "last_child_item is " << last_child_item->getPath();
+    m_slide_show_dlg = std::make_shared<slideShowDialog>(this, first_child_item, last_child_item);
+    m_slide_show_dlg->setModal(true);
+    m_slide_show_dlg->showMaximized();
 }
 

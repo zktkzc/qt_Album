@@ -94,7 +94,7 @@ QTreeView::branch:closed:has-children:has-siblings
     border: 0px;
 }
 
-SlideShowDlg {
+slideShowDialog {
     color:rgb(231,231,231);
     background-color:rgb(46,47,48);
 }
@@ -113,15 +113,15 @@ SlideShowDlg {
     background: rgb(38, 95, 153);
 }
 
-#slidpreBtn,#slidenextBtn,#playBtn {
+#slidePreBtn,#slideNextBtn,#playBtn {
     border: 0px;
 }
 
-#slideprewid {
+#slidePreWidget {
     margin-left:10px;
 }
 
-#slidenextwid{
+#slideNextWidget{
     margin-right:10px;
 }
 

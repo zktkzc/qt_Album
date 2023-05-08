@@ -13,14 +13,17 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     opentreethread.cpp \
+    picanimationwidget.cpp \
     picbutton.cpp \
     picshow.cpp \
+    picstatebtn.cpp \
     prosetpage.cpp \
     protree.cpp \
     protreeitem.cpp \
     protreethread.cpp \
     protreewidget.cpp \
     removeprodialog.cpp \
+    slideshowdialog.cpp \
     wizard.cpp
 
 HEADERS += \
@@ -28,14 +31,17 @@ HEADERS += \
     const.h \
     mainwindow.h \
     opentreethread.h \
+    picanimationwidget.h \
     picbutton.h \
     picshow.h \
+    picstatebtn.h \
     prosetpage.h \
     protree.h \
     protreeitem.h \
     protreethread.h \
     protreewidget.h \
     removeprodialog.h \
+    slideshowdialog.h \
     wizard.h
 
 FORMS += \
@@ -45,6 +51,7 @@ FORMS += \
     prosetpage.ui \
     protree.ui \
     removeprodialog.ui \
+    slideshowdialog.ui \
     wizard.ui
 
 # Default rules for deployment.
