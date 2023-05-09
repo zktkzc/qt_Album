@@ -7,6 +7,7 @@ PreListWidget::PreListWidget(QWidget *parent) : QListWidget(parent), m_global(0)
     this->setViewMode(QListWidget::IconMode);
     this->setIconSize(QSize(PREICON_SIZE, PREICON_SIZE));
     this->setSpacing(5); // 每个icon之间有5像素的间隔
+    connect(this, &PreListWidget::itemPressed, this, &PreListWidget::slotItemPressed);
 }
 
 PreListWidget::~PreListWidget()
@@ -62,6 +63,16 @@ void PreListWidget::slotUpdateSelectedItem(QTreeWidgetItem *item)
     }
 
     this->setCurrentItem(iter.value());
+}
+
+void PreListWidget::slotItemPressed(QListWidgetItem *item)
+{
+    if (QGuiApplication::mouseButtons() != Qt::LeftButton) return;
+    auto *list_item = dynamic_cast<PreListItem*>(item);
+    auto cur_index = list_item->getIndex();
+    auto path = list_item->getPath();
+    this->setCurrentItem(item);
+    emit sigUpdateSelectedShow(path);
 }
 
 

@@ -14,6 +14,8 @@
 #include <QAction>
 #include <QFileDialog>
 #include <QProgressDialog>
+#include <QtMultimedia/QMediaPlayer>
+#include <QtMultimedia/QMediaPlaylist>
 #include "protreethread.h"
 #include "opentreethread.h"
 
@@ -41,11 +43,16 @@ private:
     std::shared_ptr<ProTreeThread> m_thread_create_pro; // 使用智能指针管理线程
     std::shared_ptr<OpenTreeThread> m_thread_open_pro;
     std::shared_ptr<slideShowDialog> m_slide_show_dlg;
+    QMediaPlayer *m_player;
+    QMediaPlaylist *m_playlist;
 
 public slots:
     void slotOpenPro(const QString& path);
     void slotNextShow();
     void slotPreShow();
+    void slotSetMusic();
+    void slotStartMusic();
+    void slotStopMusic();
 
 private slots:
     void slotItemPressed(QTreeWidgetItem* pressedItem, int column);

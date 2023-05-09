@@ -44,6 +44,8 @@ void PicAnimationWidget::setPixmap(QTreeWidgetItem *item)
 
 void PicAnimationWidget::start()
 {
+    emit sigStart();
+    emit sigStartMusic();
     m_factor = 0;
     m_timer->start(25);
     m_b_start = true;
@@ -51,9 +53,33 @@ void PicAnimationWidget::start()
 
 void PicAnimationWidget::stop()
 {
+    emit sigStop();
+    emit sigStopMusic();
     m_timer->stop();
     m_factor = 0;
     m_b_start = false;
+}
+
+void PicAnimationWidget::slideNext()
+{
+    stop();
+    if (!m_cur_item) return;
+    auto *cur_pro_item = dynamic_cast<ProTreeItem*>(m_cur_item);
+    auto *next_item = cur_pro_item->getNextItem();
+    if (!next_item) return;
+    setPixmap(next_item);
+    update();
+}
+
+void PicAnimationWidget::slidePre()
+{
+    stop();
+    if (!m_cur_item) return;
+    auto *cur_pro_item = dynamic_cast<ProTreeItem*>(m_cur_item);
+    auto *pre_item = cur_pro_item->getPreItem();
+    if (!pre_item) return;
+    setPixmap(pre_item);
+    update();
 }
 
 void PicAnimationWidget::paintEvent(QPaintEvent *event)
@@ -94,6 +120,44 @@ void PicAnimationWidget::paintEvent(QPaintEvent *event)
     x = (w - m_pixmap2.width()) / 2;
     y = (h - m_pixmap2.height()) / 2;
     painter.drawPixmap(x, y, alphaPixmap2);
+}
+
+void PicAnimationWidget::updateSelectedPixmap(QTreeWidgetItem *item)
+{
+    if (!item) return;
+    auto *tree_item = dynamic_cast<ProTreeItem*>(item);
+    auto path = tree_item->getPath();
+    m_pixmap1.load(path);
+    m_cur_item = tree_item;
+    if (m_map_items.find(path) == m_map_items.end()) m_map_items[path] = tree_item;
+    auto *next_item = tree_item->getNextItem();
+    if (!next_item) return;
+    m_pixmap2.load(next_item->getPath());
+    if (m_map_items.find(next_item->getPath()) == m_map_items.end()) m_map_items[next_item->getPath()] = next_item;
+}
+
+void PicAnimationWidget::slotUpdateSelectedShow(QString path)
+{
+    auto iter = m_map_items.find(path);
+    if (iter == m_map_items.end()) return;
+    updateSelectedPixmap(iter.value());
+    update();
+}
+
+void PicAnimationWidget::slotStartOrStop()
+{
+    if (!m_b_start) {
+        m_factor = 0;
+        m_timer->start(25);
+        m_b_start = true;
+        emit sigStartMusic();
+    } else {
+        m_timer->stop();
+        m_factor = 0;
+        update();
+        m_b_start = false;
+        emit sigStopMusic();
+    }
 }
 
 void PicAnimationWidget::slotTimeOut()

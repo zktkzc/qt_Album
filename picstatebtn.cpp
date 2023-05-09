@@ -98,3 +98,13 @@ bool PicStateBtn::event(QEvent *event)
     return QPushButton::event(event);
 }
 
+void PicStateBtn::slotStart()
+{
+    setNormal2Icon();
+}
+
+void PicStateBtn::slotStop()
+{
+    setNormalIcon();
+}
+

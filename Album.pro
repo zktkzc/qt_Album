@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -67,3 +67,6 @@ RESOURCES += \
     res.qrc
 
 RC_ICONS = "icon/bulm.ico"
+
+DISTFILES += \
+    music/赵雷 - 凌晨计程车.mp3

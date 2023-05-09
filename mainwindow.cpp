@@ -52,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(pro_pic_show, &PicShow::sigPreClicked, pro_tree_widget, &ProTreeWidget::slotPreShow);
     connect(pro_tree_widget, &ProTreeWidget::sigUpdatePic, pro_pic_show, &PicShow::slotUpdatePic);
     connect(pro_tree_widget, &ProTreeWidget::sigClearSelected, pro_pic_show, &PicShow::slotDeleteItem);
+    connect(act_music, &QAction::triggered, pro_tree_widget, &ProTreeWidget::slotSetMusic);
 }
 
 MainWindow::~MainWindow()

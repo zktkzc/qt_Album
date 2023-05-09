@@ -17,9 +17,14 @@ public:
     void setPixmap(QTreeWidgetItem* item);
     void start();
     void stop();
+    void slideNext();
+    void slidePre();
 
 protected:
     void paintEvent(QPaintEvent *event);
+
+private:
+    void updateSelectedPixmap(QTreeWidgetItem* item);
 
 private:
     float m_factor;
@@ -33,6 +38,14 @@ private:
 signals:
     void sigUpdatePreList(QTreeWidgetItem* item);
     void sigUpdateSelectedItem(QTreeWidgetItem* item);
+    void sigStart();
+    void sigStop();
+    void sigStartMusic();
+    void sigStopMusic();
+
+public slots:
+    void slotUpdateSelectedShow(QString path);
+    void slotStartOrStop();
 
 private slots:
     void slotTimeOut();
