@@ -31,6 +31,8 @@ private:
     bool m_b_start;
 
 signals:
+    void sigUpdatePreList(QTreeWidgetItem* item);
+    void sigUpdateSelectedItem(QTreeWidgetItem* item);
 
 private slots:
     void slotTimeOut();

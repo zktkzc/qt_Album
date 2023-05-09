@@ -25,8 +25,11 @@ void PicAnimationWidget::setPixmap(QTreeWidgetItem *item)
 
     if (m_map_items.find(path) == m_map_items.end()) {
         m_map_items[path] = tree_item;
-        // TODO 发送更新列表逻辑
+        // 发送更新列表逻辑
+        emit sigUpdatePreList(tree_item);
     }
+
+    emit sigUpdateSelectedItem(item);
 
     auto *next_item = tree_item->getNextItem();
     if (!next_item) return;
@@ -34,6 +37,8 @@ void PicAnimationWidget::setPixmap(QTreeWidgetItem *item)
     m_pixmap2.load(next_path);
     if (m_map_items.find(next_path) == m_map_items.end()) {
         m_map_items[next_path] = next_item;
+        // 发送更新列表逻辑
+        emit sigUpdatePreList(next_item);
     }
 }
 

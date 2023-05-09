@@ -1,5 +1,6 @@
 #include "slideshowdialog.h"
 #include "ui_slideshowdialog.h"
+#include "prelistwidget.h"
 
 slideShowDialog::slideShowDialog(QWidget *parent, QTreeWidgetItem *first_item, QTreeWidgetItem *last_item) :
     QDialog(parent), m_first_item(first_item), m_last_item(last_item),
@@ -13,6 +14,9 @@ slideShowDialog::slideShowDialog(QWidget *parent, QTreeWidgetItem *first_item, Q
     ui->playBtn->setIcons(":/icon/play.png", ":/icon/play_hover.png", ":/icno/play_press.png", ":/icon/pause.png", ":/icon/pause_hover",
                           ":/icon/pause_press.png");
 
+    auto *preListWidget = dynamic_cast<PreListWidget*>(ui->preListWidget);
+    connect(ui->picAnimation, &PicAnimationWidget::sigUpdatePreList, preListWidget, &PreListWidget::slotUpdatePreList);
+    connect(ui->picAnimation, &PicAnimationWidget::sigUpdateSelectedItem, preListWidget, &PreListWidget::slotUpdateSelectedItem);
     ui->picAnimation->setPixmap(m_first_item);
     ui->picAnimation->start();
 }
